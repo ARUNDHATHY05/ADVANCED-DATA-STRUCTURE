@@ -1,139 +1,48 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-// A utility function to create a new queue node.
-typedef struct QNode {
-   int vertex;
-   struct QNode* next;
-} QNode;
-
-// A utility function to create an empty queue.
-typedef struct Queue {
-   QNode* front;
-   QNode* rear;
-} Queue;
-
-// A utility function to create a new queue node.
-QNode* newQNode(int vertex) {
-   QNode* qnode = (QNode*)malloc(sizeof(QNode));
-   qnode->vertex = vertex;
-   qnode->next = NULL;
-   return qnode;
+#include<stdio.h>
+#include<stdlib.h>
+int q[10],visited[10],i,j,n,adj[10][10],front=1,rear=0,v,item;
+void insert(int v)
+{
+	rear++;
+	q[rear]=v;
 }
-
-// A utility function to create an empty queue.
-Queue* createQueue() {
-   Queue* queue = (Queue*)malloc(sizeof(Queue));
-   queue->front = queue->rear = NULL;
-   return queue;
+int get()
+{
+	v= q[front];
+	front++;
+	return v;
 }
-
-// A utility function to check if the queue is empty.
-int isEmpty(Queue* queue) {
-   return queue->front == NULL;
-}
-
-// A utility function to add a new vertex to the queue.
-void enqueue(Queue* queue, int vertex) {
-   QNode* qnode = newQNode(vertex);
-
-   if (isEmpty(queue)) {
-       queue->front = queue->rear = qnode;
-       return;
-   }
-
-   queue->rear->next = qnode;
-   queue->rear = qnode;
-}
-
-// A utility function to remove the front vertex from the queue.
-int dequeue(Queue* queue) {
-   if (isEmpty(queue)) {
-       return -1;
-   }
-
-   QNode* qnode = queue->front;
-   int vertex = qnode->vertex;
-   queue->front = qnode->next;
-
-   if (isEmpty(queue)) {
-       queue->rear = NULL;
-   }
-
-   free(qnode);
-   return vertex;
-}
-
-// A utility function to perform the BFS traversal.
-void BFS(int** graph, int numVertices, int startVertex) {
-   Queue* queue = createQueue();
-   int* visited = (int*)malloc(numVertices * sizeof(int));
-
-   for (int i = 0; i < numVertices; i++) {
-       visited[i] = 0;
-   }
-
-   enqueue(queue, startVertex);
-   visited[startVertex] = 1;
-
-   while (!isEmpty(queue)) {
-       int vertex = dequeue(queue);
-       printf("%d ", vertex);
-
-       for (int i = 0; i < numVertices; i++) {
-           if (graph[vertex][i] && !visited[i]) {
-               enqueue(queue, i);
-               visited[i] = 1;
-           }
-       }
-   }
-
-   free(visited);
-   free(queue);
-}
-
-int main() {
-   int numVertices, numEdges;
-
-   printf("Enter the number of vertices: ");
-   scanf("%d", &numVertices);
-
-   printf("Enter the number of edges: ");
-   scanf("%d", &numEdges);
-
-   int** graph = (int**)malloc(numVertices * sizeof(int*));
-
-   for (int i = 0; i < numVertices; i++) {
-       graph[i] = (int*)malloc(numVertices * sizeof(int));
-   }
-
-   // initialize the adjacency matrix with 0
-   for (int i = 0; i < numVertices; i++) {
-       for (int j = 0; j < numVertices; j++) {
-           graph[i][j] = 0;
-       }
-   }
-
-   printf("Enter the edges (vertex pair) one by one:\n");
-   for (int i = 0; i < numEdges; i++) {
-       int u, v;
-       scanf("%d %d", &u, &v);
-       graph[u][v] = 1;
-       graph[v][u] = 1;
-   }
-
-   int startVertex;
-   printf("Enter the start vertex: ");
-   scanf("%d", &startVertex);
-
-   printf("Breadth First Search traversal of the graph is:\n");
-   BFS(graph, numVertices, startVertex);
-
-   for (int i = 0; i < numVertices; i++) {
-       free(graph[i]);
-   }
-
-   free(graph);
-
-   return 0;
+int main()
+{
+	printf("Total no of vertices :: ");
+	scanf("%d",&n);
+	for(i=1;i<=n;i++)
+		 visited[i]=0;
+	printf("\nenter the adjacency matrix!\n");
+	for(i=1;i<=n;i++)
+	{
+		for(j=1;j<=n;j++)
+		{
+				scanf("%d",&adj[i][j]);
+		}
+	}
+	printf("spanning tree edges are:\n");
+	//printf("\nselect a starting vertex from 1 to  %d:",n);
+	insert(1);
+	for(i=1;i<=n;i++)
+	{
+		item=get();
+		visited[item]=1;
+		for(j=i+1;j<=n;j++)
+		{
+			if(adj[item][j]==1 && visited[j]==0)
+			{
+				visited[j]=1;
+				insert(j);
+				printf("edge(%d,%d)\n",item,j);
+			}
+		}
+	}
+	printf("\n");
+return 0;
 }
